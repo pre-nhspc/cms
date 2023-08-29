@@ -4,7 +4,6 @@
 # System project.
 # Anton Tsypko tsypko@oi.in.ua, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Management System 1.5.dev0\n"
