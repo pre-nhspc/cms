@@ -27,7 +27,7 @@
 
 import logging
 
-from sqlalchemy import func, not_
+from sqlalchemy import func, not_, literal
 
 from cms import config, ServiceCoord, get_service_shards
 from cms.db import SessionGen, Dataset, Submission, SubmissionResult, Task
@@ -150,25 +150,32 @@ class AdminWebServer(WebService):
             queries = {}
             queries['compiling'] = not_compiled.filter(
                 SubmissionResult.compilation_tries <
-                EvaluationService.EvaluationService.MAX_COMPILATION_TRIES)
+                EvaluationService.EvaluationService.MAX_COMPILATION_TRIES)\
+                .add_columns(literal('compiling'))
             queries['max_compilations'] = not_compiled.filter(
                 SubmissionResult.compilation_tries >=
-                EvaluationService.EvaluationService.MAX_COMPILATION_TRIES)
+                EvaluationService.EvaluationService.MAX_COMPILATION_TRIES)\
+                .add_columns(literal('max_compilations'))
             queries['compilation_fail'] = base_query.filter(
-                SubmissionResult.filter_compilation_failed())
+                SubmissionResult.filter_compilation_failed())\
+                .add_columns(literal('compilation_fail'))
             queries['evaluating'] = not_evaluated.filter(
                 SubmissionResult.evaluation_tries <
-                EvaluationService.EvaluationService.MAX_EVALUATION_TRIES)
+                EvaluationService.EvaluationService.MAX_EVALUATION_TRIES)\
+                .add_columns(literal('evaluating'))
             queries['max_evaluations'] = not_evaluated.filter(
                 SubmissionResult.evaluation_tries >=
-                EvaluationService.EvaluationService.MAX_EVALUATION_TRIES)
+                EvaluationService.EvaluationService.MAX_EVALUATION_TRIES)\
+                .add_columns(literal('max_evaluations'))
             queries['scoring'] = evaluated.filter(
-                not_(SubmissionResult.filter_scored()))
+                not_(SubmissionResult.filter_scored()))\
+                .add_columns(literal('scoring'))
             queries['scored'] = evaluated.filter(
-                SubmissionResult.filter_scored())
+                SubmissionResult.filter_scored())\
+                .add_columns(literal('scored'))
 
             total_query = session\
-                .query(func.count(Submission.id))\
+                .query(func.count(Submission.id), literal('total'))\
                 .select_from(Submission)\
                 .join(Task, Submission.task_id == Task.id)
             if contest_id is not None:
@@ -181,8 +188,8 @@ class AdminWebServer(WebService):
             results = queries[keys[0]].union_all(
                 *(queries[key] for key in keys[1:])).all()
 
-        for i, k in enumerate(keys):
-            stats[k] = results[i][0]
+        for (v, k) in results:
+            stats[k] = v
         stats['compiling'] += 2 * stats['total'] - sum(stats.values())
 
         return stats
