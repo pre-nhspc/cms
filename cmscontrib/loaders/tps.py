@@ -313,7 +313,8 @@ class TpsTaskLoader(TaskLoader):
 
         # Testcases
         args["testcases"] = {}
-
+            
+        logger.info("Import testcases (total %s)." % len(testcase_codenames))
         for codename in testcase_codenames:
             infile = os.path.join(testcases_dir, "%s.in" % codename)
             outfile = os.path.join(testcases_dir, "%s.out" % codename)
@@ -322,7 +323,7 @@ class TpsTaskLoader(TaskLoader):
                     'Could not find the output file for testcase %s', codename)
                 logger.critical('Aborting...')
                 return
-
+            logger.info("Import testcase (codename %s)." % codename)
             input_digest = self.file_cacher.put_file_from_path(
                 infile,
                 "Input %s for task %s" % (codename, name))
@@ -386,6 +387,9 @@ class TpsTaskLoader(TaskLoader):
                 else:
                     parsed_data[index] = [score, testcases]
             args["score_type_parameters"] = parsed_data
+
+        dataset = Dataset(**args)
+        task.active_dataset = dataset
 
         logger.info("Task parameters loaded.")
 
