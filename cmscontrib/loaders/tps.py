@@ -124,16 +124,17 @@ class TpsTaskLoader(TaskLoader):
         args = {}
 
         args["name"] = name
-        args["title"] = data['name']
+        args["title"] = data['title'] # adjust to satisfy tps format
         args["score_mode"] = SCORE_MODE_MAX_SUBTASK
 
-        feedback_level = data.get("feedback_level", None)
-        if feedback_level:
-            if feedback_level not in (FEEDBACK_LEVEL_FULL, FEEDBACK_LEVEL_RESTRICTED, FEEDBACK_LEVEL_OI_RESTRICTED):
-                logger.critical(f"invalid feedback_level: {feedback_level}")
-                return None
+        # feedback_level = data.get("feedback_level", None)
+        # if feedback_level:
+        #     if feedback_level not in (FEEDBACK_LEVEL_FULL, FEEDBACK_LEVEL_RESTRICTED, FEEDBACK_LEVEL_OI_RESTRICTED):
+        #         logger.critical(f"invalid feedback_level: {feedback_level}")
+        #         return None
 
-            args["feedback_level"] = feedback_level
+        #     args["feedback_level"] = feedback_level
+        args["feedback_level"] = FEEDBACK_LEVEL_FULL # as nthu make that full
 
         # Statements
         if get_statement:
@@ -215,7 +216,7 @@ class TpsTaskLoader(TaskLoader):
             args['max_user_test_number'] = 100
 
         args['min_submission_interval'] = make_timedelta(60)
-        args['min_user_test_interval'] = make_timedelta(60)
+        args['min_user_test_interval'] = make_timedelta(60) # just a place holder, does not work
 
         task = Task(**args)
 
@@ -228,7 +229,8 @@ class TpsTaskLoader(TaskLoader):
         if data['task_type'] != 'OutputOnly' \
                 and data['task_type'] != 'Notice':
             args["time_limit"] = float(data['time_limit'])
-            args["memory_limit"] = int(data['memory_limit'])
+            args["memory_limit"] = int(data['memory_limit']) * 1024 * 1024 
+            # For problem setting convention
 
         args["managers"] = {}
 
@@ -332,44 +334,56 @@ class TpsTaskLoader(TaskLoader):
             args["testcases"][codename] = testcase
 
         # Score Type
-        subtasks_dir = os.path.join(self.path, 'subtasks')
-        if not os.path.exists(subtasks_dir):
-            logger.warning('Subtask folder was not found')
-            subtasks = []
-        else:
-            subtasks = sorted(os.listdir(subtasks_dir))
-
-        if len(subtasks) == 0:
+        # migrate from https://github.com/pre-nhspc/cms-aws/blob/main/cms/cmscontrib/loaders/tps.py
+        subtasks_json_src = os.path.join(self.path, 'subtasks.json')
+        if not os.path.exists(subtasks_json_src):
             number_tests = max(len(testcase_codenames), 1)
             args["score_type"] = "Sum"
             args["score_type_parameters"] = 100 / number_tests
         else:
             args["score_type"] = "GroupMin"
-            parsed_data = []
             subtask_no = -1
-            add_optional_name = False
-            for subtask in subtasks:
-                subtask_no += 1
-                with open(os.path.join(subtasks_dir, subtask), 'rt',
-                          encoding='utf-8') as subtask_json:
-                    subtask_data = json.load(subtask_json)
-                    score = int(subtask_data["score"])
-                    testcases = "|".join(
-                        re.escape(testcase)
-                        for testcase in subtask_data["testcases"]
-                    )
-                    optional_name = "Subtask %d" % subtask_no
-                    if subtask_no == 0 and score == 0:
-                        add_optional_name = True
-                        optional_name = "Samples"
-                    if add_optional_name:
-                        parsed_data.append([score, testcases, optional_name])
-                    else:
-                        parsed_data.append([score, testcases])
-            args["score_type_parameters"] = parsed_data
+            mapping_src = os.path.join(self.path, 'tests', 'mapping')
+            with open(subtasks_json_src, 'rt', encoding='utf-8') as json_file:
+                subtasks_data = json.load(json_file)
 
-        dataset = Dataset(**args)
-        task.active_dataset = dataset
+            use_mapping = os.path.exists(mapping_src)
+            if use_mapping:
+                mapping_data = {}
+                for subtask in subtasks_data['subtasks']:
+                    mapping_data[subtask] = []
+                with open(mapping_src, 'rt', encoding='utf-8') as mapping_file:
+                    for row in mapping_file:
+                        row = row.strip().split(' ')
+                        if len(row) == 2:
+                            mapping_data[row[0]].append(row[1])
+
+            add_optional_name = data['add_optional_name'] if 'add_optional_name' in data else False
+
+            parsed_data = [[]] * len(subtasks_data['subtasks'].items())
+            for subtask, subtask_data in subtasks_data['subtasks'].items():
+                subtask_no += 1
+                score = int(subtask_data["score"])
+                if use_mapping:
+                    if data["type"] == 'OutputOnly':
+                        codenames = sorted(list(set('^' + testcase.split('-')[0] for testcase in mapping_data[subtask])))
+                    else:
+                        codenames = sorted(list(set('^' + testcase.split('-')[0] + '\\-' for testcase in mapping_data[subtask])))
+                    testcases = "|".join(codenames)
+                    if testcases == '':
+                        testcases = '|NO_TESTCASES_AVAILABLE'
+                else:
+                    testcases = subtask_data["regex"]
+                optional_name = "Subtask %d" % subtask_no
+                if subtask_no == 0 and score == 0:
+                #     continue   # We don't need sample testcase in CMS
+                    optional_name = "Samples"
+                index = int(subtask_data["index"])
+                if add_optional_name:
+                    parsed_data[index] = [score, testcases, optional_name]
+                else:
+                    parsed_data[index] = [score, testcases]
+            args["score_type_parameters"] = parsed_data
 
         logger.info("Task parameters loaded.")
 
