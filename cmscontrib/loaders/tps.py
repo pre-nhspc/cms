@@ -134,7 +134,7 @@ class TpsTaskLoader(TaskLoader):
         #         return None
 
         #     args["feedback_level"] = feedback_level
-        args["feedback_level"] = FEEDBACK_LEVEL_FULL # as nthu make that full
+        args["feedback_level"] = FEEDBACK_LEVEL_FULL # as NTHU make that full
 
         # Statements
         if get_statement:
@@ -205,18 +205,17 @@ class TpsTaskLoader(TaskLoader):
         # args['token_gen_interval'] = make_timedelta(1800)
         # args['token_gen_max'] = 2
 
-        if "score_precision" in data:
-            args['score_precision'] = int(data["score_precision"])
-        else:
-            args['score_precision'] = 2
+
+        args['score_precision'] = 2
+
         args['max_submission_number'] = 50
         args['max_user_test_number'] = 50
         if data["task_type"] == 'OutputOnly':
             args['max_submission_number'] = 100
             args['max_user_test_number'] = 100
 
-        args['min_submission_interval'] = make_timedelta(60)
-        args['min_user_test_interval'] = make_timedelta(60) # just a place holder, does not work
+        args['min_submission_interval'] = make_timedelta(120)
+        # args['min_user_test_interval'] = make_timedelta(120) should not allow testing 
 
         task = Task(**args)
 
@@ -314,7 +313,7 @@ class TpsTaskLoader(TaskLoader):
         # Testcases
         args["testcases"] = {}
             
-        logger.info("Import testcases (total %s)." % len(testcase_codenames))
+        logger.info("Importing testcases (total %s):" % len(testcase_codenames))
         for codename in testcase_codenames:
             infile = os.path.join(testcases_dir, "%s.in" % codename)
             outfile = os.path.join(testcases_dir, "%s.out" % codename)
@@ -323,7 +322,6 @@ class TpsTaskLoader(TaskLoader):
                     'Could not find the output file for testcase %s', codename)
                 logger.critical('Aborting...')
                 return
-            logger.info("Import testcase (codename %s)." % codename)
             input_digest = self.file_cacher.put_file_from_path(
                 infile,
                 "Input %s for task %s" % (codename, name))
@@ -373,6 +371,7 @@ class TpsTaskLoader(TaskLoader):
                     testcases = "|".join(codenames)
                     if testcases == '':
                         testcases = '|NO_TESTCASES_AVAILABLE'
+                        logger.warning("Subtask %s has no testcase." % subtask)
                 else:
                     logger.critical('Could not mapping file, please use tps to generate tests first.')
                     logger.critical('Aborting...')
