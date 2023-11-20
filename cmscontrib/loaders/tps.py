@@ -373,7 +373,9 @@ class TpsTaskLoader(TaskLoader):
                     if testcases == '':
                         testcases = '|NO_TESTCASES_AVAILABLE'
                 else:
-                    testcases = subtask_data["regex"]
+                    logger.critical('Could not mapping file, please use tps to generate tests first.')
+                    logger.critical('Aborting...')
+                    return
                 optional_name = "Subtask %d" % subtask_no
                 if subtask_no == 0 and score == 0:
                 #     continue   # We don't need sample testcase in CMS
