@@ -207,7 +207,7 @@ msgstr[1] "接著每 %(gen_interval)g 分鐘"
 msgid "you get another %(type_s)s, "
 msgid_plural "you get %(gen_number)d other %(type_pl)s, "
 msgstr[0] "會產生一個額外的 %(type_s)s，"
-msgstr[1] "會產生 %d 個額外的 %(type_s)s，"
+msgstr[1] "會產生 %(gen_number)d 個額外的 %(type_pl)s，"
 
 #, python-format
 msgid "up to a maximum of one %(type_s)s."
@@ -219,7 +219,7 @@ msgstr[1] "至多可以同時擁有 %(gen_max)d 個未使用的 %(type_pl)s。"
 msgid "you get another %(type_s)s."
 msgid_plural "you get %(gen_number)d other %(type_pl)s."
 msgstr[0] "會產生一個額外的 %(type_s)s."
-msgstr[1] "會產生 %d 個額外的 %(type_s)s."
+msgstr[1] "會產生 %(gen_number)d 個額外的 %(type_pl)s."
 
 #, python-format
 msgid "You don't get other %(type_pl)s."
@@ -235,22 +235,22 @@ msgstr[1] "兩次 %(type_s)s 的使用間必須間隔至少 %(min_interval)g 秒
 msgid "and no more than one %(type_s)s in total."
 msgid_plural "and no more than %(max_number)d %(type_pl)s in total."
 msgstr[0] "且總共至多只能使用一個 %(type_s)s."
-msgstr[1] "且總共可以使用 %(max_number)d 個 %(type_s)s."
+msgstr[1] "且總共可以使用 %(max_number)d 個 %(type_pl)s."
 
 #, python-format
 msgid "You can use a %(type_s)s every second."
-msgid_plural "You can use a %(type_s)s every %(min_interval)g seconds."
-msgstr[0] "每秒可以使用一個 %(type_pl)s."
+msgid_plural "You can use a %(type_pl)s every %(min_interval)g seconds."
+msgstr[0] "每秒可以使用一個 %(type_s)s."
 msgstr[1] "每隔 %(min_interval)g 秒可以使用一個 %(type_pl)s."
 
 #, python-format
 msgid "You can use no more than one %(type_s)s in total."
 msgid_plural "You can use no more than %(max_number)d %(type_pl)s in total."
 msgstr[0] "且一旦產生 %(type_s)s 後將不會再增加."
-msgstr[1] "且一旦產生總共 %(max_number)d 個 %(type_s)s 後將不會再增加."
+msgstr[1] "且一旦產生總共 %(max_number)d 個 %(type_pl)s 後將不會再增加."
 
 msgid "You have no limitations on how you use them."
-msgstr "使用規則中沒有其他額外的限制."
+msgstr "使用規則中沒有其他額外的限制。"
 
 msgid "Too many print jobs!"
 msgstr "你送出太多列印工作了！"
@@ -352,7 +352,7 @@ msgstr "你在本競賽之傳送次數已達上限（%d 次）"
 
 #, python-format
 msgid "You have reached the maximum limit of at most %d submissions on this task."
-msgstr "你在本題目之傳送次數已達上限 （%d 次）"
+msgstr "你在本題目之傳送次數已達上限（%d 次）"
 
 msgid "Submissions too frequent!"
 msgstr "傳送過於頻繁！"
@@ -960,7 +960,7 @@ msgstr "你可以在一次上傳中送出任意的輸出檔案。"
 
 #, python-format
 msgid "You can submit %(submissions_left)s more solution(s)."
-msgstr "您還可以上傳 %(user_tests_left)s 個答案。"
+msgstr "您還可以上傳 %(submissions_left)s 個答案。"
 
 msgid "submission.zip"
 msgstr ""
