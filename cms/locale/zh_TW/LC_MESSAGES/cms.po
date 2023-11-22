@@ -5,7 +5,6 @@
 # magrady24 <b01902110@csie.ntu.edu.tw>, 2013.
 # LittleCube <b12902057@csie.ntu.edu.tw>, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
