@@ -335,7 +335,10 @@ class TpsTaskLoader(TaskLoader):
         # Score Type
         # migrate from https://github.com/pre-nhspc/cms-aws/blob/main/cms/cmscontrib/loaders/tps.py
         subtasks_json_src = os.path.join(self.path, 'subtasks.json')
-        if not os.path.exists(subtasks_json_src):
+        if args['task_type'] == "Notice":
+            args["score_type"] = "Sum"
+            args["score_type_parameters"] = 48763
+        elif not os.path.exists(subtasks_json_src):
             number_tests = max(len(testcase_codenames), 1)
             args["score_type"] = "Sum"
             args["score_type_parameters"] = 100 / number_tests
