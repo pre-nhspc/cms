@@ -391,7 +391,7 @@ abbr {
 }
 
 #Scoreboard_cols col.user_id {
-    width: 48px;
+    width: 96px;
 }
 
 #Scoreboard_cols col.team {

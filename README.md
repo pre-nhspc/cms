@@ -1,4 +1,4 @@
-Contest Management System
+Contest Management System (modified for NHSPC mock)
 =========================
 
 Homepage: <http://cms-dev.github.io/>
@@ -6,6 +6,36 @@ Homepage: <http://cms-dev.github.io/>
 [![Build Status](https://github.com/cms-dev/cms/workflows/ci/badge.svg)](https://github.com/cms-dev/cms/actions)
 [![codecov](https://codecov.io/gh/cms-dev/cms/branch/master/graph/badge.svg)](https://codecov.io/gh/cms-dev/cms)
 [![Join the chat at https://gitter.im/cms-dev/cms](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cms-dev/cms?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+Known Issue
+------------
+
+Some translation might be wrong or problematic, see the following log:
+```
+cms/locale/zh_TW/LC_MESSAGES/cms.po:199: unknown named placeholder 'type_pl'
+cms/locale/zh_TW/LC_MESSAGES/cms.po:217: unknown named placeholder 'type_pl'
+cms/locale/zh_TW/LC_MESSAGES/cms.po:683: unknown named placeholder 'submissions'
+msg has more translations than num_plurals of catalog
+Problem on line 199: 
+msg has more translations than num_plurals of catalog
+Problem on line 205: 
+msg has more translations than num_plurals of catalog
+Problem on line 211: 
+msg has more translations than num_plurals of catalog
+Problem on line 217: 
+msg has more translations than num_plurals of catalog
+Problem on line 223: 
+msg has more translations than num_plurals of catalog
+Problem on line 233: 
+msg has more translations than num_plurals of catalog
+Problem on line 239: 
+msg has more translations than num_plurals of catalog
+Problem on line 245: 
+msg has more translations than num_plurals of catalog
+Problem on line 251: 
+msg has more translations than num_plurals of catalog
+Problem on line 843: 
+```
 
 Introduction
 ------------

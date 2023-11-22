@@ -681,7 +681,7 @@ msgstr "你在本競賽中最多可以上傳 %(submissions)s 次。"
 
 #, python-format
 msgid "You can submit at most %(user_tests)s user tests during this contest."
-msgstr "你在本題目中最多可以上傳 %(submissions)s 次。"
+msgstr "你在本題目中最多可以上傳 %(user_tests)s 次。"
 
 #, python-format
 msgid ""
