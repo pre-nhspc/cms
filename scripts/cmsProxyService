@@ -25,7 +25,7 @@ gevent.monkey.patch_all()  # noqa
 import logging
 import sys
 
-from cms import ConfigError, default_argument_parser
+from cms import ConfigError, proxy_argument_parser
 from cms.db import ask_for_contest, test_db_connection
 from cms.service.ProxyService import ProxyService
 
@@ -38,7 +38,7 @@ def main():
 
     """
     test_db_connection()
-    success = default_argument_parser("Ranking relayer for CMS.",
+    success = proxy_argument_parser("Ranking relayer for CMS.",
                                       ProxyService,
                                       ask_contest=ask_for_contest).run()
     return 0 if success is True else 1

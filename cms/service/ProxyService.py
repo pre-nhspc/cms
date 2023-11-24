@@ -247,7 +247,7 @@ class ProxyService(TriggeredService):
 
     """
 
-    def __init__(self, shard, contest_id):
+    def __init__(self, shard, show_full_name, contest_id):
         """Start the service with the given parameters.
 
         Create an instance of the ProxyService and make it listen on
@@ -264,7 +264,7 @@ class ProxyService(TriggeredService):
         super().__init__(shard)
 
         self.contest_id = contest_id
-
+        self.show_full_name = show_full_name
         # Store what data we already sent to rankings, to avoid
         # sending it twice.
         self.scores_sent_to_rankings = set()
@@ -344,12 +344,13 @@ class ProxyService(TriggeredService):
             users = dict()
             teams = dict()
 
+            # Change to remove second character
             for participation in contest.participations:
                 user = participation.user
                 team = participation.team
                 if not participation.hidden:
                     users[encode_id(user.username)] = {
-                        "f_name": user.first_name,
+                        "f_name": user.first_name if self.show_full_name else user.first_name[:2] + '〇' + user.first_name[3:],
                         "l_name": user.last_name,
                         "team": encode_id(team.code)
                                 if team is not None else None,

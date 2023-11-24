@@ -77,5 +77,5 @@ FEEDBACK_LEVEL_OI_RESTRICTED = "oi_restricted"
 from .conf import Address, ServiceCoord, ConfigError, async_config, config
 from .util import mkdir, rmtree, utf8_decoder, get_safe_shard, \
     get_service_address, get_service_shards, contest_id_from_args, \
-    default_argument_parser
+    default_argument_parser, proxy_argument_parser
 from .plugin import plugin_list

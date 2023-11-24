@@ -230,6 +230,49 @@ def default_argument_parser(description, cls, ask_contest=None):
     else:
         return cls(args.shard, contest_id)
 
+def proxy_argument_parser(description, cls, ask_contest=None):
+    """Argument parser for cmsProxyService.
+
+    description (string): description of the service.
+    cls (type): service's class.
+    ask_contest (function|None): None if the service does not require
+        a contest, otherwise a function that returns a contest_id
+        (after asking the admins?)
+
+    return (object): an instance of a service.
+
+    """
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("shard", action="store", type=int, nargs="?")
+
+    # We need to allow using the switch "-c" also for services that do
+    # not need the contest_id because RS needs to be able to restart
+    # everything without knowing which is which.
+    contest_id_help = "id of the contest to automatically load, " \
+                      "or ALL to serve all contests"
+    identification_help = "Show participants' fullname (default: remove " \
+                          "second character)"
+
+    parser.add_argument("-c", "--contest-id", action="store",
+                        type=utf8_decoder, help=contest_id_help)
+    parser.add_argument("-s", "--show-full-name", action="store_true",
+                        type=utf8_decoder, help=identification_help,
+                        default=False)
+    args = parser.parse_args()
+
+    try:
+        args.shard = get_safe_shard(cls.__name__, args.shard)
+    except ValueError:
+        raise ConfigError("Couldn't autodetect shard number and "
+                          "no shard specified for service %s, "
+                          "quitting." % (cls.__name__,))
+
+    contest_id = contest_id_from_args(args.contest_id, ask_contest)
+    show_full_name = args.show_full_name
+    if contest_id is None:
+        return cls(args.shard, show_full_name)
+    else:
+        return cls(args.shard, show_full_name, contest_id)
 
 def contest_id_from_args(args_contest_id, ask_contest):
     """Return a valid contest_id from the arguments or None if multicontest
