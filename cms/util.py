@@ -256,8 +256,7 @@ def proxy_argument_parser(description, cls, ask_contest=None):
     parser.add_argument("-c", "--contest-id", action="store",
                         type=utf8_decoder, help=contest_id_help)
     parser.add_argument("-s", "--show-full-name", action="store_true",
-                        type=utf8_decoder, help=identification_help,
-                        default=False)
+                        help=identification_help, default=False)
     args = parser.parse_args()
 
     try:
