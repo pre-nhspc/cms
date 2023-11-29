@@ -913,6 +913,10 @@ abbr {
     min-height: 242px;
 }
 
+#UserDetail_team {
+    visibility: hidden;
+}
+
 #UserDetail_f_name,
 #UserDetail_l_name,
 #UserDetail_team,
@@ -921,6 +925,10 @@ abbr {
     right: 470px;
     font-size: 2em;
     line-height: 1.5em;
+}
+
+#UserDetail_flag {
+    width: 100px;
 }
 
 #UserDetail_f_name {
